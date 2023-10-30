@@ -1,0 +1,26 @@
+name: My GitHub Action
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Check if Hela is installed
+      run: |
+        if ! Hela --help &> /dev/null; then
+          echo "Hela is not installed, installing..."
+          cargo install Hela
+        else
+          echo "Hela is already installed."
+        fi
+
+    - name: Run Hela
+      run: Hela --help
