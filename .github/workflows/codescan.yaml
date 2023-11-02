@@ -44,4 +44,5 @@ jobs:
             --code-path $REPO_URL \
             --sast --sca --secret  \
             --verbose \
-            --commit-id $COMMIT_ID
+            --commit-id $COMMIT_ID \
+            --slack-url ${{ secrets.SLACK_ALERT_URL }}
