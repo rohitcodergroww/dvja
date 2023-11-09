@@ -38,6 +38,7 @@ jobs:
         run: |
           COMMIT_ID=${{ github.event.pull_request.head.sha }}
           REPO_URL=${{ steps.repo-url.outputs.url }}
+          docker pull rohitcoder/hela
           docker run \
             --rm \
             rohitcoder/hela \
