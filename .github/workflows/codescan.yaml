@@ -44,5 +44,4 @@ jobs:
             rohitcoder/hela \
             --code-path $REPO_URL \
             --sast --sca --secret  \
-            --verbose \
-            --commit-id $COMMIT_ID
+            --verbose
