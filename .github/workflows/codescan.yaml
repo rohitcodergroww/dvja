@@ -19,7 +19,6 @@ jobs:
       - name: Get path at commit
         id: commit-path
         run: |
-          COMMIT_ID=${{ github.event.pull_request.head.sha }}
           COMMIT_PATH=$(git rev-parse --show-toplevel)
           echo "::set-output name=path::$COMMIT_PATH"
 
@@ -33,27 +32,6 @@ jobs:
         run: |
           echo "::set-output name=url::$(git remote get-url origin)"
 
-      - name: Create blank SARIF report
-        run: |
-          mkdir -p "${{ steps.commit-path.outputs.path }}"
-          touch "${{ steps.commit-path.outputs.path }}/sarif_report.json"
-          chmod 777 "${{ steps.commit-path.outputs.path }}/sarif_report.json"
-
-      - name: Create ownership script
-        run: |
-          echo "#!/bin/sh" > "${{ steps.commit-path.outputs.path }}/change_ownership.sh"
-          echo "chown -R $(id -u):$(id -g) /tmp" >> "${{ steps.commit-path.outputs.path }}/change_ownership.sh"
-          chmod +x "${{ steps.commit-path.outputs.path }}/change_ownership.sh"
-
-      - name: Change ownership of /tmp directory
-        run: |
-          docker pull rohitcoder/hela
-          docker run \
-            --rm \
-            -v "${{ steps.commit-path.outputs.path }}/sarif_report.json:/tmp/sarif_report.json" \
-            rohitcoder/hela \
-            /bin/sh -c "/tmp/change_ownership.sh"
-
       - name: Running Code scanner
         run: |
           COMMIT_ID=${{ github.event.pull_request.head.sha }}
@@ -61,11 +39,15 @@ jobs:
           docker pull rohitcoder/hela
           docker run \
             --rm \
-            -v "${{ steps.commit-path.outputs.path }}/sarif_report.json:/tmp/sarif_report.json" \
             rohitcoder/hela \
             --code-path $REPO_URL \
             --sast --sca --secret  \
             --verbose
+
+      - name: Copy SARIF report to workspace
+        run: |
+          CONTAINER_ID=$(docker ps -q -n=1)
+          docker cp "${CONTAINER_ID}:/tmp/sarif_report.json" "${{ steps.commit-path.outputs.path }}/sarif_report.json"
 
       - name: Print updated SARIF report
         run: |
