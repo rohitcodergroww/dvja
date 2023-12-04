@@ -39,7 +39,6 @@ jobs:
           REPO_URL=${{ steps.repo-url.outputs.url }}
           docker pull rohitcoder/hela
           CONTAINER_ID=$(docker run \
-            --rm \
             -d \
             rohitcoder/hela \
             --code-path $REPO_URL \
