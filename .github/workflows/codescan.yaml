@@ -54,7 +54,7 @@ jobs:
 
       - name: Import scan results into DefectDojo
         id: import-scan-results-into-defectdojo
-        uses: portswigger-cloud/defectdojo-github-action@v1
+        uses: portswigger-cloud/defectdojo-import-scan@v1.0.1
         with:
           defectdojo-url: http://65.0.93.107:8080
           defectdojo-username: rohitcoder
