@@ -39,6 +39,12 @@ jobs:
           touch "${{ steps.commit-path.outputs.path }}/sarif_report.json"
           chmod 777 "${{ steps.commit-path.outputs.path }}/sarif_report.json"
 
+      - name: Create ownership script
+        run: |
+          echo "#!/bin/sh" > "${{ steps.commit-path.outputs.path }}/change_ownership.sh"
+          echo "chown -R $(id -u):$(id -g) /tmp" >> "${{ steps.commit-path.outputs.path }}/change_ownership.sh"
+          chmod +x "${{ steps.commit-path.outputs.path }}/change_ownership.sh"
+
       - name: Change ownership of /tmp directory
         run: |
           docker pull rohitcoder/hela
@@ -46,7 +52,7 @@ jobs:
             --rm \
             -v "${{ steps.commit-path.outputs.path }}/sarif_report.json:/tmp/sarif_report.json" \
             rohitcoder/hela \
-            sh -c "chown -R $(id -u):$(id -g) /tmp"
+            /bin/sh -c "/tmp/change_ownership.sh"
 
       - name: Running Code scanner
         run: |
