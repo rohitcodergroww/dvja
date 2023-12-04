@@ -52,6 +52,16 @@ jobs:
           CONTAINER_ID=${{ steps.code-scanner.outputs.container-id }}
           docker cp "${CONTAINER_ID}:/tmp/sarif_report.json" "${{ steps.commit-path.outputs.path }}/sarif_report.json"
 
-      - name: Print updated SARIF report
-        run: |
-          cat "${{ steps.commit-path.outputs.path }}/sarif_report.json"
+      - name: Import scan results into DefectDojo
+        id: import-scan-results-into-defectdojo
+        uses: portswigger-cloud/defectdojo-github-action@v1
+        with:
+          defectdojo-url: http://65.0.93.107:8080
+          defectdojo-username: rohitcoder
+          defectdojo-password: rohit@123
+          defectdojo-product-type: Insurance AppSec
+          defectdojo-product: Insurance AppSec
+          defectdojo-environment-type: Production
+          defectdojo-scan-type: SARIF
+          defectdojo-engagement-name: Hela Scan
+          scan-results-file-name: "${{ steps.commit-path.outputs.path }}/sarif_report.json"
