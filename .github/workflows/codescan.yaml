@@ -33,20 +33,24 @@ jobs:
           echo "::set-output name=url::$(git remote get-url origin)"
 
       - name: Running Code scanner
+        id: code-scanner
         run: |
           COMMIT_ID=${{ github.event.pull_request.head.sha }}
           REPO_URL=${{ steps.repo-url.outputs.url }}
           docker pull rohitcoder/hela
-          docker run \
+          CONTAINER_ID=$(docker run \
             --rm \
+            -d \
             rohitcoder/hela \
             --code-path $REPO_URL \
             --sast --sca --secret  \
-            --verbose
+            --verbose)
+          echo "::set-output name=container-id::$CONTAINER_ID"
+          docker wait $CONTAINER_ID
 
       - name: Copy SARIF report to workspace
         run: |
-          CONTAINER_ID=$(docker ps -q -n=1)
+          CONTAINER_ID=${{ steps.code-scanner.outputs.container-id }}
           docker cp "${CONTAINER_ID}:/tmp/sarif_report.json" "${{ steps.commit-path.outputs.path }}/sarif_report.json"
 
       - name: Print updated SARIF report
