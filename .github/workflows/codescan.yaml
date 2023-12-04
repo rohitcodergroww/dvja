@@ -15,7 +15,6 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
- 
 
       - name: Get path at commit
         id: commit-path
@@ -45,3 +44,14 @@ jobs:
             --code-path $REPO_URL \
             --sast --sca --secret  \
             --verbose
+
+      - name: Extract SARIF report
+        run: |
+          # Mount the /tmp directory from the container
+          docker cp "$(docker ps -q -n=1)":/tmp/sarif_report.json "${{ steps.commit-path.outputs.path }}/sarif_report.json"
+          
+          # Print the address of the SARIF report in the GitHub Actions workspace
+          echo "SARIF Report Address: ${{ steps.commit-path.outputs.path }}/sarif_report.json"
+          
+          # Print the data of the SARIF report
+          cat "${{ steps.commit-path.outputs.path }}/sarif_report.json"
