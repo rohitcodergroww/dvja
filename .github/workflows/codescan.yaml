@@ -33,6 +33,10 @@ jobs:
         run: |
           echo "::set-output name=url::$(git remote get-url origin)"
 
+      - name: Create blank SARIF report
+        run: |
+          echo "{}" > "${{ steps.commit-path.outputs.path }}/sarif_report.json"
+
       - name: Running Code scanner
         run: |
           COMMIT_ID=${{ github.event.pull_request.head.sha }}
@@ -40,18 +44,12 @@ jobs:
           docker pull rohitcoder/hela
           docker run \
             --rm \
+            -v "${{ steps.commit-path.outputs.path }}/sarif_report.json:/tmp/sarif_report.json" \
             rohitcoder/hela \
             --code-path $REPO_URL \
             --sast --sca --secret  \
             --verbose
 
-      - name: Extract SARIF report
+      - name: Print updated SARIF report
         run: |
-          # Mount the /tmp directory from the container
-          docker cp "$(docker ps -q -n=1)":/tmp/sarif_report.json "${{ steps.commit-path.outputs.path }}/sarif_report.json"
-          
-          # Print the address of the SARIF report in the GitHub Actions workspace
-          echo "SARIF Report Address: ${{ steps.commit-path.outputs.path }}/sarif_report.json"
-          
-          # Print the data of the SARIF report
           cat "${{ steps.commit-path.outputs.path }}/sarif_report.json"
