@@ -50,7 +50,7 @@ jobs:
       - name: Copy SARIF report to workspace
         run: |
           CONTAINER_ID=${{ steps.code-scanner.outputs.container-id }}
-          docker cp "${CONTAINER_ID}:/tmp/sarif_report.json" "${{ steps.commit-path.outputs.path }}/sarif_report.json"
+          docker cp "${CONTAINER_ID}:/tmp/sarif_report.json" "${{ github.workspace }}/sarif_report.json"
 
       - name: Import scan results into DefectDojo
         id: import-scan-results-into-defectdojo
@@ -64,4 +64,4 @@ jobs:
           defectdojo-environment-type: Production
           defectdojo-scan-type: SARIF
           defectdojo-engagement-name: Hela Scan
-          scan-results-file-name: "${{ steps.commit-path.outputs.path }}/sarif_report.json"
+          scan-results-file-name: "sarif_report.json"
