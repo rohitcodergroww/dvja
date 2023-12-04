@@ -35,7 +35,9 @@ jobs:
 
       - name: Create blank SARIF report
         run: |
-          echo "{}" > "${{ steps.commit-path.outputs.path }}/sarif_report.json"
+          mkdir -p "${{ steps.commit-path.outputs.path }}"
+          touch "${{ steps.commit-path.outputs.path }}/sarif_report.json"
+          chmod 777 "${{ steps.commit-path.outputs.path }}/sarif_report.json"
 
       - name: Running Code scanner
         run: |
