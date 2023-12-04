@@ -39,6 +39,15 @@ jobs:
           touch "${{ steps.commit-path.outputs.path }}/sarif_report.json"
           chmod 777 "${{ steps.commit-path.outputs.path }}/sarif_report.json"
 
+      - name: Change ownership of /tmp directory
+        run: |
+          docker pull rohitcoder/hela
+          docker run \
+            --rm \
+            -v "${{ steps.commit-path.outputs.path }}/sarif_report.json:/tmp/sarif_report.json" \
+            rohitcoder/hela \
+            sh -c "chown -R $(id -u):$(id -g) /tmp"
+
       - name: Running Code scanner
         run: |
           COMMIT_ID=${{ github.event.pull_request.head.sha }}
