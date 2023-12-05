@@ -52,10 +52,6 @@ jobs:
           CONTAINER_ID=${{ steps.code-scanner.outputs.container-id }}
           docker cp "${CONTAINER_ID}:/tmp/sarif_report.json" "${{ github.workspace }}/sarif_report.json"
 
-      - name: View SARIF report content
-        run: |
-          cat "${{ github.workspace }}/sarif_report.json"
-
       - name: Import scan results into DefectDojo
         id: import-scan-results-into-defectdojo
         uses: portswigger-cloud/defectdojo-import-scan@v1.0.1
