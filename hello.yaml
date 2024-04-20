@@ -6,5 +6,5 @@ sources:
   s3:
     s3_1:
       access_key: AKIA5GW2DKEWRAPUA4N5
-      secret_key: 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
+      secret_key: twhFHHkRhIeMoUjLIjtZfOKj+msjCQEa8VJvektPqw
       bucket_name: test-bucket-shit1xqd
